@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16
+    container_name: contacts_db
+    restart: always
+    env_file:
+      - .env
+    #environment:
+      #POSTGRES_DB: contacts_db
+      #POSTGRES_USER: postgres
+      #POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: contacts_backend
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    container_name: contacts_frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+volumes:
+  postgres_data:
